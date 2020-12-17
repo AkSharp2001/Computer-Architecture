@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+  int data;
+  struct Node* next;
+};
+
+struct Node* front = NULL;
+
+void insert(struct Node* newNode, int data) {
+ 
+  if(front == NULL){
+    front = newNode;
+    return;
+  }
+  
+  struct Node* ptr = front;
+  struct Node* prev = NULL;
+  
+  while(ptr != NULL){
+    if(data <= ptr->data) { 
+      if(prev == NULL) {
+	newNode->next = ptr;
+	front = newNode;
+	return;
+      }
+      else {
+	prev->next = newNode;
+	newNode->next = ptr;
+	return;
+      }
+    }
+    else if(data > ptr->data) {
+      if(ptr->next == NULL) {
+	ptr->next = newNode;
+	return;
+      }
+      else{
+	prev = ptr;
+	ptr = ptr->next;
+      }
+    }
+  }
+}
+
+void delete(int val) {
+  if (front == NULL) {
+    return;
+  }
+  if (front->data == val) {
+    front = front->next;
+  }
+  struct Node* ptr = front;
+  struct Node* prev = NULL;
+  
+  while (ptr != NULL) {
+    if (ptr->data == val) {
+      prev->next = ptr->next;
+    }
+    prev = ptr;
+    ptr = ptr->next;
+  }
+  
+}
+
+
+
+int main(int argc, char* argv[])
+{
+  if (argc < 2) {
+    printf("error\n");
+    return 0;
+  }
+  
+  FILE* fp = fopen(argv[1], "r");
+  if (fp == NULL) {
+    printf("error\n");
+    return 0;
+  }
+  char action;
+  int num;
+  int numNodes = 0;
+ 
+    
+  while (1) {
+    int n = fscanf(fp, "%c\t%d\n", &action, &num);
+    if (n != 2) {
+      break;
+    }
+    if (action == 'i') {
+      struct Node *newNode = (struct Node*) malloc(sizeof(struct Node));
+      newNode->data = num;
+      newNode->next = NULL;
+      insert(newNode, num);
+    }
+    else if (action == 'd') {
+      delete(num);
+     
+    }
+  }
+    
+  printf("%d\n", numNodes);
+
+
+
+  
+  while(front != NULL) {
+    printf("%d\t", front->data);
+    front = front->next;
+  }
+  printf("\n");
+  
+  
+  struct Node* temp = front;
+  while (front != NULL) {
+    temp = temp->next;
+    free(temp);
+  }
+  
+  fclose(fp);
+  
+}
